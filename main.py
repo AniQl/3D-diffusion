@@ -106,6 +106,18 @@ class DiffusionModelFitter:
         # Save to CSV
         df_combined.to_csv(filename, index=False)
 
+        D1exp_fit, D2exp_fit, A1_fit, A2_fit = popt_exp
+        D1_fit_avg, D2_fit_avg, D3_fit_avg = popt_avg
+        # Create a DataFrame for model parameters and save to a separate CSV
+        df_params = pd.DataFrame({
+            'Parameter': ['D1', 'D2', 'D3', 'D1exp', 'D2exp', 'A1', 'A2'],
+            'Value': [D1_fit_avg, D2_fit_avg, D3_fit_avg, D1exp_fit, D2exp_fit, A1_fit, A2_fit]
+        })
+
+        params_filename = filename.replace('.csv', '_D.csv')
+        df_params.to_csv(params_filename, index=False)
+        print(f"Model parameters saved to {params_filename}")
+
 
 # Usage example
 fitter = DiffusionModelFitter('data_100C.txt', 0.001, 1.3995)
