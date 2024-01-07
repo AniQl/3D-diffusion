@@ -34,7 +34,7 @@ class DiffusionModelFitter:
 
     def fit_average_E_model(self, initial_guess=[1E-11, 1E-13, 1E-14]):
         start_time = time.time()
-        popt_avg, pcov_avg = curve_fit(self.average_E_model, self.g_values, self.E_values, p0=initial_guess)
+        popt_avg, pcov_avg = curve_fit(self.average_E_model, self.g_values, self.E_values, p0=initial_guess, maxfev=2000)
         end_time = time.time()
         print(f"Time taken for average E model fitting: {end_time - start_time} seconds")
         return popt_avg
@@ -46,7 +46,7 @@ class DiffusionModelFitter:
 
     def fit_two_exponential_model(self, initial_guess_exp=[1e-13, 1e-14, 0.5, 0.5]):
         start_time = time.time()
-        popt_exp, pcov_exp = curve_fit(self.two_exponential_model, self.g_values, self.E_values, p0=initial_guess_exp)
+        popt_exp, pcov_exp = curve_fit(self.two_exponential_model, self.g_values, self.E_values, p0=initial_guess_exp, maxfev=2000)
         end_time = time.time()
         print(f"Time taken for two-exponential model fitting: {end_time - start_time} seconds")
         return popt_exp
@@ -117,41 +117,3 @@ class DiffusionModelFitter:
         params_filename = filename.replace('.csv', '_D.csv')
         df_params.to_csv(params_filename, index=False)
         print(f"Model parameters saved to {params_filename}")
-
-
-# Usage example
-fitter = DiffusionModelFitter('data_100C.txt', 0.001, 1.3995)
-start_time = time.time()
-popt_avg = fitter.fit_average_E_model()
-popt_exp = fitter.fit_two_exponential_model()
-total_time = time.time() - start_time
-print(f"Total time for model fitting: {total_time} seconds")
-
-#fitter.plot_results(popt_avg, popt_exp, show_plot=False)
-fitter.create_csv(popt_avg, popt_exp, 'results.csv')
-print("CSV file created")
-
-# Run for different parameters
-# # List of data files and parameters
-# data_files = [
-#     ('data_file1.txt', 0.001, 1.3995),
-#     ('data_file2.txt', 0.002, 1.4995),
-#     # Add more files and parameters as needed
-# ]
-#
-# for file, small_delta, Delta in data_files:
-#     # Initialize the fitter with the current file and parameters
-#     fitter = DiffusionModelFitter(file, small_delta, Delta)
-#
-#     # Fit the models
-#     popt_avg = fitter.fit_average_E_model()
-#     popt_exp = fitter.fit_two_exponential_model()
-#
-#     # Optionally, you can plot the results (set show_plot=True if needed)
-#     # fitter.plot_results(popt_avg, popt_exp, show_plot=False)
-#
-#     # Create a CSV file for this run
-#     csv_filename = f'results_{file.replace(".txt", "")}.csv'
-#     fitter.create_csv(popt_avg, popt_exp, csv_filename)
-#
-#     print(f"CSV file created for {file}: {csv_filename}")
